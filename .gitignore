@@ -48,3 +48,5 @@ repo/
 .ccache/
 node_modules/
 VULKAN_SDK/
+CMakeUserPresets.json
+compile_commands.json

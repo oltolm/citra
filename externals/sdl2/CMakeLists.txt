@@ -22,4 +22,6 @@ set(SDL_DLOPEN ON CACHE BOOL "")
 set(SDL_SENSOR OFF CACHE BOOL "")
 set(SDL_LOCALE OFF CACHE BOOL "")
 
+set(SDL_TEST OFF CACHE BOOL "")
+
 add_subdirectory(SDL)
