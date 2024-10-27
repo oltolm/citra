@@ -53,7 +53,7 @@ private:
 
 private slots:
     void OnRowSelected(int row, int column);
-    void OnCheckChanged(int state);
+    void OnCheckChanged(Qt::CheckState state);
     void OnTextEdited();
     void OnDeleteCheat();
     void OnAddCheat();
