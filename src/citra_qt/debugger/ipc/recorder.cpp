@@ -22,8 +22,8 @@ IPCRecorderWidget::IPCRecorderWidget(Core::System& system_, QWidget* parent)
     ui->setupUi(this);
     qRegisterMetaType<IPCDebugger::RequestRecord>();
 
-    connect(ui->enabled, &QCheckBox::stateChanged, this,
-            [this](int new_state) { SetEnabled(new_state == Qt::Checked); });
+    connect(ui->enabled, &QCheckBox::checkStateChanged, this,
+            [this](Qt::CheckState new_state) { SetEnabled(new_state == Qt::Checked); });
     connect(ui->clearButton, &QPushButton::clicked, this, &IPCRecorderWidget::Clear);
     connect(ui->filter, &QLineEdit::textChanged, this, &IPCRecorderWidget::ApplyFilterToAll);
     connect(ui->main, &QTreeWidget::itemDoubleClicked, this, &IPCRecorderWidget::OpenRecordDialog);

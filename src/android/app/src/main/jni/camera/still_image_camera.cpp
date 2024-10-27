@@ -28,7 +28,7 @@ void CleanupJNI(JNIEnv* env) {
     env->DeleteGlobalRef(s_still_image_camera_helper_class);
 }
 
-Interface::Interface(SharedGlobalRef<jstring> path_, const Service::CAM::Flip& flip)
+Interface::Interface(SharedGlobalRef<jstring> path_, Service::CAM::Flip flip)
     : path(std::move(path_)) {
     mirror = base_mirror =
         flip == Service::CAM::Flip::Horizontal || flip == Service::CAM::Flip::Reverse;
@@ -121,7 +121,7 @@ bool Interface::IsPreviewAvailable() {
 SharedGlobalRef<jstring> Factory::last_path{};
 
 std::unique_ptr<CameraInterface> Factory::Create(const std::string& config,
-                                                 const Service::CAM::Flip& flip) {
+                                                 Service::CAM::Flip flip) {
 
     JNIEnv* env = IDCache::GetEnvForThread();
     if (last_path != nullptr) {

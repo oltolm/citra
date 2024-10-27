@@ -18,7 +18,7 @@ namespace Camera::StillImage {
 
 class Interface final : public CameraInterface {
 public:
-    Interface(SharedGlobalRef<jstring> path, const Service::CAM::Flip& flip);
+    Interface(SharedGlobalRef<jstring> path, Service::CAM::Flip flip);
     ~Interface();
     void StartCapture() override;
     void StopCapture() override{};
@@ -48,7 +48,7 @@ private:
 class Factory final : public CameraFactory {
 public:
     std::unique_ptr<CameraInterface> Create(const std::string& config,
-                                            const Service::CAM::Flip& flip) override;
+                                            Service::CAM::Flip flip) override;
 
 private:
     /// Record the path chosen to avoid multiple prompt problem

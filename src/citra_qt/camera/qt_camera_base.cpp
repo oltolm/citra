@@ -10,10 +10,22 @@
 
 namespace Camera {
 
-QtCameraInterface::QtCameraInterface(const Service::CAM::Flip& flip) {
+QtCameraInterface::QtCameraInterface(Service::CAM::Flip flip) {
     using namespace Service::CAM;
-    flip_horizontal = basic_flip_horizontal = (flip == Flip::Horizontal) || (flip == Flip::Reverse);
-    flip_vertical = basic_flip_vertical = (flip == Flip::Vertical) || (flip == Flip::Reverse);
+    switch (flip) {
+    case Flip::Reverse:
+        orient = Qt::Horizontal | Qt::Vertical;
+        break;
+    case Flip::Vertical:
+        orient = Qt::Vertical;
+        break;
+    case Flip::Horizontal:
+        orient = Qt::Vertical;
+        break;
+    case Flip::None:
+        orient = Qt::Orientation(0);
+        break;
+    }
 }
 
 void QtCameraInterface::SetFormat(Service::CAM::OutputFormat output_format) {
@@ -27,8 +39,19 @@ void QtCameraInterface::SetResolution(const Service::CAM::Resolution& resolution
 
 void QtCameraInterface::SetFlip(Service::CAM::Flip flip) {
     using namespace Service::CAM;
-    flip_horizontal = basic_flip_horizontal ^ (flip == Flip::Horizontal || flip == Flip::Reverse);
-    flip_vertical = basic_flip_vertical ^ (flip == Flip::Vertical || flip == Flip::Reverse);
+    switch (flip) {
+    case Flip::Reverse:
+        orient ^= Qt::Horizontal | Qt::Vertical;
+        break;
+    case Flip::Vertical:
+        orient ^= Qt::Vertical;
+        break;
+    case Flip::Horizontal:
+        orient ^= Qt::Vertical;
+        break;
+    case Flip::None:
+        break;
+    }
 }
 
 void QtCameraInterface::SetEffect(Service::CAM::Effect effect) {
@@ -38,13 +61,12 @@ void QtCameraInterface::SetEffect(Service::CAM::Effect effect) {
 }
 
 std::vector<u16> QtCameraInterface::ReceiveFrame() {
-    return CameraUtil::ProcessImage(QtReceiveFrame(), width, height, output_rgb, flip_horizontal,
-                                    flip_vertical);
+    return CameraUtil::ProcessImage(QtReceiveFrame(), width, height, output_rgb, orient);
 }
 
 std::unique_ptr<CameraInterface> QtCameraFactory::CreatePreview(const std::string& config,
                                                                 int width, int height,
-                                                                const Service::CAM::Flip& flip) {
+                                                                Service::CAM::Flip flip) {
     std::unique_ptr<CameraInterface> camera = Create(config, flip);
 
     if (camera->IsPreviewAvailable()) {

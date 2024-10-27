@@ -11,7 +11,7 @@
 
 namespace Camera {
 
-StillImageCamera::StillImageCamera(QImage image_, const Service::CAM::Flip& flip)
+StillImageCamera::StillImageCamera(QImage image_, Service::CAM::Flip flip)
     : QtCameraInterface(flip), image(std::move(image_)) {}
 
 StillImageCamera::~StillImageCamera() {
@@ -51,7 +51,7 @@ const std::string StillImageCameraFactory::GetFilePath() const {
 }
 
 std::unique_ptr<CameraInterface> StillImageCameraFactory::Create(const std::string& config,
-                                                                 const Service::CAM::Flip& flip) {
+                                                                 Service::CAM::Flip flip) {
     std::string real_config = config;
     if (config.empty()) {
         // call GetFilePath() in UI thread (note: StillImageCameraFactory itself is initialized in

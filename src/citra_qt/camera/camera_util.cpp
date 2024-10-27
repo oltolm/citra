@@ -206,7 +206,7 @@ std::vector<u16> Rgb2Yuv(const QImage& source, int width, int height) {
 }
 
 std::vector<u16> ProcessImage(const QImage& image, int width, int height, bool output_rgb = false,
-                              bool flip_horizontal = false, bool flip_vertical = false) {
+                              Qt::Orientations orient = Qt::Vertical) {
     std::vector<u16> buffer(width * height);
     if (image.isNull()) {
         return buffer;
@@ -215,7 +215,7 @@ std::vector<u16> ProcessImage(const QImage& image, int width, int height, bool o
         image.scaled(width, height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
     QImage transformed =
         scaled.copy((scaled.width() - width) / 2, (scaled.height() - height) / 2, width, height)
-            .mirrored(flip_horizontal, flip_vertical);
+            .flipped(orient);
     if (output_rgb) {
         QImage converted = transformed.convertToFormat(QImage::Format_RGB16);
         std::memcpy(buffer.data(), converted.bits(), width * height * sizeof(u16));

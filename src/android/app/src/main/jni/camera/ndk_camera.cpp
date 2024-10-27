@@ -265,7 +265,7 @@ void CaptureSession::Load(ACameraManager* manager, const std::string& id) {
 #undef CAMERA_CALL
 #undef CREATE
 
-Interface::Interface(Factory& factory_, const std::string& id_, const Service::CAM::Flip& flip)
+Interface::Interface(Factory& factory_, const std::string& id_, Service::CAM::Flip flip)
     : factory(factory_), id(id_) {
     mirror = base_mirror =
         flip == Service::CAM::Flip::Horizontal || flip == Service::CAM::Flip::Reverse;
@@ -447,7 +447,7 @@ std::shared_ptr<CaptureSession> Factory::CreateCaptureSession(const std::string&
 }
 
 std::unique_ptr<CameraInterface> Factory::Create(const std::string& config,
-                                                 const Service::CAM::Flip& flip) {
+                                                 Service::CAM::Flip flip) {
 
     manager.reset(ACameraManager_create());
     ACameraIdList* id_list = nullptr;

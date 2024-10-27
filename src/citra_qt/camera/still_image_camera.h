@@ -14,7 +14,7 @@ namespace Camera {
 
 class StillImageCamera final : public QtCameraInterface {
 public:
-    StillImageCamera(QImage image, const Service::CAM::Flip& flip);
+    StillImageCamera(QImage image, Service::CAM::Flip flip);
     ~StillImageCamera();
     void StartCapture() override;
     void StopCapture() override;
@@ -31,7 +31,7 @@ class StillImageCameraFactory final : public QObject, public QtCameraFactory {
 
 public:
     std::unique_ptr<CameraInterface> Create(const std::string& config,
-                                            const Service::CAM::Flip& flip) override;
+                                            Service::CAM::Flip flip) override;
 
     Q_INVOKABLE const std::string GetFilePath() const;
 

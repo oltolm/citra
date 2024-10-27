@@ -60,7 +60,7 @@ void ConfigureCheats::LoadCheats() {
             i, 2, new QTableWidgetItem(QString::fromStdString(cheats[i]->GetType())));
         enabled->setProperty("row", static_cast<int>(i));
 
-        connect(enabled, &QCheckBox::stateChanged, this, &ConfigureCheats::OnCheckChanged);
+        connect(enabled, &QCheckBox::checkStateChanged, this, &ConfigureCheats::OnCheckChanged);
     }
 }
 
@@ -158,10 +158,10 @@ void ConfigureCheats::OnRowSelected(int row, int column) {
     last_col = column;
 }
 
-void ConfigureCheats::OnCheckChanged(int state) {
+void ConfigureCheats::OnCheckChanged(Qt::CheckState state) {
     const QCheckBox* checkbox = qobject_cast<QCheckBox*>(sender());
     int row = static_cast<int>(checkbox->property("row").toInt());
-    cheats[row]->SetEnabled(state);
+    cheats[row]->SetEnabled(state == Qt::Checked);
     cheat_engine.SaveCheatFile(title_id);
 }
 

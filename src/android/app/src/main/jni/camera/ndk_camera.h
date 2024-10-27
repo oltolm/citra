@@ -20,7 +20,7 @@ class Factory;
 
 class Interface : public CameraInterface {
 public:
-    Interface(Factory& factory, const std::string& id, const Service::CAM::Flip& flip);
+    Interface(Factory& factory, const std::string& id, Service::CAM::Flip flip);
     ~Interface() override;
     void StartCapture() override;
     void StopCapture() override;
@@ -58,7 +58,7 @@ public:
     ~Factory() override;
 
     std::unique_ptr<CameraInterface> Create(const std::string& config,
-                                            const Service::CAM::Flip& flip) override;
+                                            Service::CAM::Flip flip) override;
 
     // Request the reopening of all previously disconnected camera devices.
     // Called when the application is brought to foreground (i.e. we have priority with the camera)

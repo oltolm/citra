@@ -72,7 +72,7 @@ private:
 class QtMultimediaCamera final : public QtCameraInterface {
 public:
     QtMultimediaCamera(const std::shared_ptr<QtMultimediaCameraHandler>& handler,
-                       const Service::CAM::Flip& flip)
+                       Service::CAM::Flip flip)
         : QtCameraInterface(flip), handler(handler) {}
 
     void StartCapture() override {
@@ -105,7 +105,7 @@ public:
         : handler_factory(handler_factory) {}
 
     std::unique_ptr<CameraInterface> Create(const std::string& config,
-                                            const Service::CAM::Flip& flip) override {
+                                            Service::CAM::Flip flip) override {
         return std::make_unique<QtMultimediaCamera>(handler_factory->Create(config), flip);
     }
 

@@ -16,6 +16,6 @@ std::vector<u16> Rgb2Yuv(const QImage& source, int width, int height);
 
 /// Processes the QImage (resizing, flipping ...) and converts it to a std::vector
 std::vector<u16> ProcessImage(const QImage& source, int width, int height, bool output_rgb,
-                              bool flip_horizontal, bool flip_vertical);
+                              Qt::Orientations orient);
 
 } // namespace CameraUtil

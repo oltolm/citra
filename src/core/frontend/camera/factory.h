@@ -22,7 +22,7 @@ public:
      * @returns a unique_ptr to the created camera object.
      */
     virtual std::unique_ptr<CameraInterface> Create(const std::string& config,
-                                                    const Service::CAM::Flip& flip) = 0;
+                                                    Service::CAM::Flip flip) = 0;
 
     /**
      * Creates a camera object for preview based on the configuration string.
@@ -35,8 +35,7 @@ public:
      * occurs.
      */
     virtual std::unique_ptr<CameraInterface> CreatePreview(const std::string& config, int width,
-                                                           int height,
-                                                           const Service::CAM::Flip& flip) {
+                                                           int height, Service::CAM::Flip flip) {
         return Create(config, flip);
     }
 };
@@ -55,7 +54,7 @@ void RegisterFactory(const std::string& name, std::unique_ptr<CameraFactory> fac
  *     defined by the factory.
  */
 std::unique_ptr<CameraInterface> CreateCamera(const std::string& name, const std::string& config,
-                                              const Service::CAM::Flip& flip);
+                                              Service::CAM::Flip flip);
 
 /**
  * Creates a camera from the factory for previewing.
@@ -65,6 +64,6 @@ std::unique_ptr<CameraInterface> CreateCamera(const std::string& name, const std
  */
 std::unique_ptr<CameraInterface> CreateCameraPreview(const std::string& name,
                                                      const std::string& config, int width,
-                                                     int height, const Service::CAM::Flip& flip);
+                                                     int height, Service::CAM::Flip flip);
 
 } // namespace Camera
