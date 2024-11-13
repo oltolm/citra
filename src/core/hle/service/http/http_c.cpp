@@ -3,6 +3,7 @@
 // Refer to the license.txt file included.
 
 #include <atomic>
+#include <cstddef>
 #include <tuple>
 #include <unordered_map>
 #include <boost/algorithm/string/replace.hpp>
@@ -137,9 +138,9 @@ static URLInfo SplitUrl(const std::string& url) {
     if (port_start != std::string::npos) {
         std::string port_str = host.substr(port_start + 1);
         host = host.substr(0, port_start);
-        char* p_end = nullptr;
-        port = std::strtol(port_str.c_str(), &p_end, 10);
-        if (*p_end) {
+        size_t end;
+        port = std::stol(port_str, &end, 10);
+        if (end == port_str.size()) {
             port = -1;
         }
     }

@@ -21,7 +21,7 @@ std::vector<u8> HexToBytes(const std::string& hex) {
 
     for (unsigned int i = 0; i < hex.length(); i += 2) {
         std::string byteString = hex.substr(i, 2);
-        u8 byte = static_cast<u8>(std::strtol(byteString.c_str(), nullptr, 16));
+        u8 byte = static_cast<u8>(std::stol(byteString, nullptr, 16));
         bytes.push_back(byte);
     }
     return bytes;

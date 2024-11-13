@@ -236,7 +236,7 @@ int main(int argc, char** argv) {
             switch (static_cast<char>(arg)) {
             case 'g':
                 errno = 0;
-                gdb_port = strtoul(optarg, &endarg, 0);
+                gdb_port = std::strtoul(optarg, &endarg, 0);
                 use_gdbstub = true;
                 if (endarg == optarg)
                     errno = EINVAL;

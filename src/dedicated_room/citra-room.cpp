@@ -205,10 +205,10 @@ int main(int argc, char** argv) {
                 room_description.assign(optarg);
                 break;
             case 'p':
-                port = static_cast<u16>(strtoul(optarg, &endarg, 0));
+                port = static_cast<u16>(std::strtoul(optarg, &endarg, 0));
                 break;
             case 'm':
-                max_members = strtoul(optarg, &endarg, 0);
+                max_members = std::strtoul(optarg, &endarg, 0);
                 break;
             case 'w':
                 password.assign(optarg);
@@ -217,7 +217,7 @@ int main(int argc, char** argv) {
                 preferred_game.assign(optarg);
                 break;
             case 'i':
-                preferred_game_id = strtoull(optarg, &endarg, 16);
+                preferred_game_id = std::strtoull(optarg, &endarg, 16);
                 break;
             case 'u':
                 username.assign(optarg);
