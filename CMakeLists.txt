@@ -60,33 +60,33 @@ else()
 endif()
 
 option(ENABLE_SDL2 "Enable using SDL2" ON)
-CMAKE_DEPENDENT_OPTION(ENABLE_SDL2_FRONTEND "Enable the SDL2 frontend" ON "ENABLE_SDL2;NOT ANDROID AND NOT IOS" OFF)
+cmake_dependent_option(ENABLE_SDL2_FRONTEND "Enable the SDL2 frontend" ON "ENABLE_SDL2;NOT ANDROID AND NOT IOS" OFF)
 option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
 
 # Set bundled qt as dependent options.
 option(ENABLE_QT "Enable the Qt frontend" ON)
 option(ENABLE_QT_TRANSLATION "Enable translations for the Qt frontend" OFF)
-CMAKE_DEPENDENT_OPTION(ENABLE_QT_UPDATER "Enable built-in updater for the Qt frontend" ON "NOT IOS" OFF)
+cmake_dependent_option(ENABLE_QT_UPDATER "Enable built-in updater for the Qt frontend" ON "NOT IOS" OFF)
 
-CMAKE_DEPENDENT_OPTION(ENABLE_TESTS "Enable generating tests executable" ON "NOT IOS" OFF)
-CMAKE_DEPENDENT_OPTION(ENABLE_DEDICATED_ROOM "Enable generating dedicated room executable" ON "NOT ANDROID AND NOT IOS" OFF)
+cmake_dependent_option(ENABLE_TESTS "Enable generating tests executable" ON "NOT IOS" OFF)
+cmake_dependent_option(ENABLE_DEDICATED_ROOM "Enable generating dedicated room executable" ON "NOT ANDROID AND NOT IOS" OFF)
 
 option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" ON)
 option(ENABLE_SCRIPTING "Enable RPC server for scripting" ON)
 
-CMAKE_DEPENDENT_OPTION(ENABLE_CUBEB "Enables the cubeb audio backend" ON "NOT IOS" OFF)
+cmake_dependent_option(ENABLE_CUBEB "Enables the cubeb audio backend" ON "NOT IOS" OFF)
 option(ENABLE_OPENAL "Enables the OpenAL audio backend" ON)
 
-CMAKE_DEPENDENT_OPTION(ENABLE_LIBUSB "Enable libusb for GameCube Adapter support" ON "NOT IOS" OFF)
+cmake_dependent_option(ENABLE_LIBUSB "Enable libusb for GameCube Adapter support" ON "NOT IOS" OFF)
 
-CMAKE_DEPENDENT_OPTION(ENABLE_SOFTWARE_RENDERER "Enables the software renderer" ON "NOT ANDROID" OFF)
-CMAKE_DEPENDENT_OPTION(ENABLE_OPENGL "Enables the OpenGL renderer" ON "NOT APPLE" OFF)
+cmake_dependent_option(ENABLE_SOFTWARE_RENDERER "Enables the software renderer" ON "NOT ANDROID" OFF)
+cmake_dependent_option(ENABLE_OPENGL "Enables the OpenGL renderer" ON "NOT APPLE" OFF)
 option(ENABLE_VULKAN "Enables the Vulkan renderer" ON)
 
 option(USE_DISCORD_PRESENCE "Enables Discord Rich Presence" OFF)
 
 # Compile options
-CMAKE_DEPENDENT_OPTION(COMPILE_WITH_DWARF "Add DWARF debugging information" ${IS_DEBUG_BUILD} "MINGW" OFF)
+cmake_dependent_option(COMPILE_WITH_DWARF "Add DWARF debugging information" ${IS_DEBUG_BUILD} "MINGW" OFF)
 option(ENABLE_LTO "Enable link time optimization" ${DEFAULT_ENABLE_LTO})
 option(CITRA_USE_PRECOMPILED_HEADERS "Use precompiled headers" ON)
 option(CITRA_WARNINGS_AS_ERRORS "Enable warnings as errors" ON)
@@ -212,9 +212,9 @@ message(STATUS "Target architecture: ${ARCHITECTURE}")
 # ===========================
 
 # boost asio's concept usage doesn't play nicely with some compilers yet.
-add_definitions(-DBOOST_ASIO_DISABLE_CONCEPTS)
+add_compile_definitions(BOOST_ASIO_DISABLE_CONCEPTS)
 # boost can have issues compiling with C++17 and up on newer versions of Clang.
-add_definitions(-DBOOST_NO_CXX98_FUNCTION_BASE)
+add_compile_definitions(BOOST_NO_CXX98_FUNCTION_BASE)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -388,10 +388,10 @@ get_timestamp(BUILD_DATE)
 
 # Boost
 # Prevent boost from linking against libs when building
-add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY
-    -DBOOST_SYSTEM_NO_LIB
-    -DBOOST_DATE_TIME_NO_LIB
-    -DBOOST_REGEX_NO_LIB
+add_compile_definitions(BOOST_ERROR_CODE_HEADER_ONLY
+    BOOST_SYSTEM_NO_LIB
+    BOOST_DATE_TIME_NO_LIB
+    BOOST_REGEX_NO_LIB
 )
 if (USE_SYSTEM_BOOST)
     find_package(Boost 1.70.0 COMPONENTS container locale serialization iostreams REQUIRED)
@@ -402,7 +402,7 @@ add_subdirectory(externals)
 
 # Boost (bundled)
 if (NOT USE_SYSTEM_BOOST)
-    add_definitions( -DBOOST_ALL_NO_LIB )
+    add_compile_definitions( BOOST_ALL_NO_LIB )
     add_library(Boost::boost ALIAS boost)
     add_library(Boost::serialization ALIAS boost_serialization)
     add_library(Boost::iostreams ALIAS boost_iostreams)
