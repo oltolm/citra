@@ -11,19 +11,17 @@ endif()
 
 # Set compilation flags
 if (MSVC)
-    set(CMAKE_CONFIGURATION_TYPES Debug Release CACHE STRING "" FORCE)
-
     # Silence "deprecation" warnings
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
 
     # Avoid windows.h junk
-    add_definitions(-DNOMINMAX)
+    add_compile_definitions(NOMINMAX)
 
     # Avoid windows.h from including some usually unused libs like winsocks.h, since this might cause some redefinition errors.
-    add_definitions(-DWIN32_LEAN_AND_MEAN)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
 
     # Ensure that projects build with Unicode support.
-    add_definitions(-DUNICODE -D_UNICODE)
+    add_compile_definitions(UNICODE _UNICODE)
 
     # /W3                 - Level 3 warnings
     # /MP                 - Multi-threaded compilation
@@ -89,35 +87,27 @@ if (MSVC)
         add_compile_options(/WX)
     endif()
 
-    # Since MSVC's debugging information is not very deterministic, so we have to disable it
-    # when using ccache or other caching tools
-    if (CMAKE_C_COMPILER_LAUNCHER STREQUAL "ccache" OR CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache"
-            OR CITRA_USE_PRECOMPILED_HEADERS)
-        # Precompiled headers are deleted if not using /Z7. See https://github.com/nanoant/CMakePCHCompiler/issues/21
-        add_compile_options(/Z7)
-    else()
-        add_compile_options(/Zi)
-    endif()
+    add_compile_options(/Zi)
 
     # /GS- - No stack buffer overflow checks
     add_compile_options("$<$<CONFIG:Release>:/GS->")
 
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG   "/DEBUG /MANIFEST:NO" CACHE STRING "" FORCE)
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "/DEBUG /MANIFEST:NO /INCREMENTAL:NO /OPT:REF,ICF /PDBALTPATH:%_PDB%" CACHE STRING "" FORCE)
+    add_link_options("$<$<CONFIG:Debug>:/DEBUG:/MANIFEST:NO>")
+    add_link_options("$<$<CONFIG:Release>:/DEBUG /MANIFEST:NO;/INCREMENTAL:NO;/OPT:REF,ICF;/PDBALTPATH:%_PDB%>")
 else()
     add_compile_options(
         -Wall
         # In case a flag isn't supported on e.g. a certain architecture, don't error.
         -Wno-unused-command-line-argument
         # Build fortification options
-        -Wp,-D_GLIBCXX_ASSERTIONS
+        "-Wp,-D_GLIBCXX_ASSERTIONS"
         -fstack-protector-strong
         -fstack-clash-protection
     )
 
     if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
         # _FORTIFY_SOURCE can't be used without optimizations.
-        add_compile_options(-Wp,-D_FORTIFY_SOURCE=2)
+        add_compile_options("-Wp,-D_FORTIFY_SOURCE=2")
     endif()
 
     if (CITRA_WARNINGS_AS_ERRORS)
@@ -136,7 +126,7 @@ else()
     endif()
 
     if (MINGW)
-        add_definitions(-DMINGW_HAS_SECURE_API)
+        add_compile_definitions(MINGW_HAS_SECURE_API)
         if (COMPILE_WITH_DWARF)
             add_compile_options("-gdwarf")
         endif()
@@ -148,7 +138,7 @@ else()
         # On modern Unixes, this is typically already the case. The lone exception is
         # glibc, which may default to 32 bits. glibc allows this to be configured
         # by setting _FILE_OFFSET_BITS.
-        add_definitions(-D_FILE_OFFSET_BITS=64)
+        add_compile_definitions(_FILE_OFFSET_BITS=64)
 
         # GNU ar: Create thin archive files.
         # Requires binutils-2.19 or later.
