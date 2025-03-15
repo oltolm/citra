@@ -12,7 +12,6 @@ option(USE_SYSTEM_SOUNDTOUCH "Use the system SoundTouch (instead of the bundled 
 option(USE_SYSTEM_CPP_HTTPLIB "Use the system cpp-httplib (instead of the bundled one)" OFF)
 option(USE_SYSTEM_JSON "Use the system JSON (nlohmann-json3) package (instead of the bundled one)" OFF)
 option(USE_SYSTEM_DYNARMIC "Use the system dynarmic (instead of the bundled one)" OFF)
-option(USE_SYSTEM_FMT "Use the system fmt (instead of the bundled one)" OFF)
 option(USE_SYSTEM_XBYAK "Use the system xbyak (instead of the bundled one)" OFF)
 option(USE_SYSTEM_INIH "Use the system inih (instead of the bundled one)" OFF)
 option(USE_SYSTEM_FFMPEG_HEADERS "Use the system FFmpeg headers (instead of the bundled one)" OFF)

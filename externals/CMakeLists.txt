@@ -76,14 +76,9 @@ target_include_directories(dds-ktx INTERFACE ./dds-ktx)
 
 # fmt and Xbyak need to be added before dynarmic
 # libfmt
-if(USE_SYSTEM_FMT)
-    add_library(fmt INTERFACE)
-    find_package(fmt REQUIRED)
-    target_link_libraries(fmt INTERFACE fmt::fmt)
-else()
-    option(FMT_INSTALL "" ON)
-    add_subdirectory(fmt EXCLUDE_FROM_ALL)
-endif()
+add_library(fmt INTERFACE)
+find_package(fmt REQUIRED)
+target_link_libraries(fmt INTERFACE fmt::fmt)
 
 
 # Xbyak
