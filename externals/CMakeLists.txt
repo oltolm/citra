@@ -371,24 +371,14 @@ endif()
 # Vulkan dependencies
 if (ENABLE_VULKAN)
     # glslang
-    if(USE_SYSTEM_GLSLANG)
-        find_package(glslang REQUIRED)
-        add_library(glslang INTERFACE)
-        add_library(SPIRV INTERFACE)
-        target_link_libraries(glslang INTERFACE glslang::glslang)
-        target_link_libraries(SPIRV INTERFACE glslang::SPIRV)
-        # System include path is different from submodule include path
-        get_target_property(GLSLANG_PREFIX glslang::SPIRV INTERFACE_INCLUDE_DIRECTORIES)
-        target_include_directories(SPIRV SYSTEM INTERFACE "${GLSLANG_PREFIX}/glslang")
-    else()
-        set(SKIP_GLSLANG_INSTALL ON CACHE BOOL "")
-        set(ENABLE_GLSLANG_BINARIES OFF CACHE BOOL "")
-        set(ENABLE_SPVREMAPPER OFF CACHE BOOL "")
-        set(ENABLE_CTEST OFF CACHE BOOL "")
-        set(ENABLE_HLSL OFF CACHE BOOL "")
-        set(BUILD_EXTERNAL OFF CACHE BOOL "")
-        add_subdirectory(glslang)
-    endif()
+    find_package(glslang REQUIRED)
+    add_library(glslang INTERFACE)
+    add_library(SPIRV INTERFACE)
+    target_link_libraries(glslang INTERFACE glslang::glslang)
+    target_link_libraries(SPIRV INTERFACE glslang::SPIRV)
+    # System include path is different from submodule include path
+    get_target_property(GLSLANG_PREFIX glslang::SPIRV INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(SPIRV SYSTEM INTERFACE "${GLSLANG_PREFIX}/glslang")
 
     # sirit
     add_subdirectory(sirit EXCLUDE_FROM_ALL)
