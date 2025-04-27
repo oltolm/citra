@@ -61,9 +61,6 @@
 [submodule "dds-ktx"]
     path = externals/dds-ktx
     url = https://github.com/septag/dds-ktx
-[submodule "openal-soft"]
-    path = externals/openal-soft
-    url = https://github.com/kcat/openal-soft
 [submodule "vma"]
     path = externals/vma
     url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator

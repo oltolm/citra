@@ -20,7 +20,6 @@ option(USE_SYSTEM_ENET "Use the system libenet (instead of the bundled one)" OFF
 option(USE_SYSTEM_CRYPTOPP "Use the system cryptopp (instead of the bundled one)" OFF)
 option(USE_SYSTEM_CUBEB "Use the system cubeb (instead of the bundled one)" OFF)
 option(USE_SYSTEM_LODEPNG "Use the system lodepng (instead of the bundled one)" OFF)
-option(USE_SYSTEM_OPENAL "Use the system OpenAL (instead of the bundled one)" OFF)
 option(USE_SYSTEM_VMA "Use the system VulkanMemoryAllocator (instead of the bundled one)" OFF)
 option(USE_SYSTEM_VULKAN_HEADERS "Use the system Vulkan headers (instead of the bundled ones)" OFF)
 option(USE_SYSTEM_CATCH2 "Use the system Catch2 (instead of the bundled one)" OFF)
