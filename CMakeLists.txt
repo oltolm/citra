@@ -12,16 +12,9 @@ set(CMAKE_POLICY_DEFAULT_CMP0063 NEW)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/externals/cmake-modules")
-include(DownloadExternals)
 include(CMakeDependentOption)
 
 project(citra LANGUAGES C CXX ASM)
-
-# Some submodules like to pick their own default build type if not specified.
-# Make sure we default to Release build type always, unless the generator has custom types.
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
-endif()
 
 if (APPLE)
     # Silence warnings on empty objects, for example when platform-specific code is #ifdef'd out.
@@ -306,43 +299,16 @@ endif()
 # against all the src files. This should be used before making a pull request.
 # =======================================================================
 
-set(CLANG_FORMAT_POSTFIX "-15")
 find_program(CLANG_FORMAT
-    NAMES clang-format${CLANG_FORMAT_POSTFIX}
-          clang-format
-    PATHS ${PROJECT_BINARY_DIR}/externals)
-# if find_program doesn't find it, try to download from externals
-if (NOT CLANG_FORMAT)
-    if (WIN32)
-        message(STATUS "Clang format not found! Downloading...")
-        set(CLANG_FORMAT "${PROJECT_BINARY_DIR}/externals/clang-format${CLANG_FORMAT_POSTFIX}.exe")
-        file(DOWNLOAD
-            https://github.com/citra-emu/ext-windows-bin/raw/master/clang-format${CLANG_FORMAT_POSTFIX}.exe
-            "${CLANG_FORMAT}" SHOW_PROGRESS
-            STATUS DOWNLOAD_SUCCESS)
-        if (NOT DOWNLOAD_SUCCESS EQUAL 0)
-            message(WARNING "Could not download clang format! Disabling the clang format target")
-            file(REMOVE ${CLANG_FORMAT})
-            unset(CLANG_FORMAT)
-        endif()
-    else()
-        message(WARNING "Clang format not found! Disabling the clang format target")
-    endif()
-endif()
+    NAMES clang-format)
 
 if (CLANG_FORMAT)
     set(SRCS ${PROJECT_SOURCE_DIR}/src)
     set(CCOMMENT "Running clang format against all the .h and .cpp files in src/")
     if (WIN32)
-        if(MINGW)
-            add_custom_target(clang-format
-                COMMAND find `cygpath -u ${SRCS}` -iname *.h -o -iname *.cpp -o -iname *.mm | xargs `cygpath -u ${CLANG_FORMAT}` -i
-                COMMENT ${CCOMMENT})
-        else()
-            add_custom_target(clang-format
-                COMMAND powershell.exe -Command "Get-ChildItem '${SRCS}/*' -Include *.cpp,*.h,*.mm -Recurse | Foreach {&'${CLANG_FORMAT}' -i $_.fullname}"
-                COMMENT ${CCOMMENT})
-        endif()
+        add_custom_target(clang-format
+            COMMAND powershell.exe -Command "Get-ChildItem '${SRCS}/*' -Include *.cpp,*.h,*.mm -Recurse | Foreach {&'${CLANG_FORMAT}' -i $_.fullname}"
+            COMMENT ${CCOMMENT})
     else()
         add_custom_target(clang-format
             COMMAND find ${SRCS} -iname *.h -o -iname *.cpp -o -iname *.mm | xargs ${CLANG_FORMAT} -i

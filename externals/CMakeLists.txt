@@ -8,7 +8,6 @@ else()
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMakeModules)
-include(DownloadExternals)
 include(ExternalProject)
 
 # Boost
