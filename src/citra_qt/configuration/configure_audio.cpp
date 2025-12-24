@@ -45,9 +45,9 @@ ConfigureAudio::ConfigureAudio(bool is_powered_on, QWidget* parent)
     SetupPerGameUI();
     SetConfiguration();
 
-    connect(ui->output_type_combo_box, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->output_type_combo_box, &QComboBox::currentIndexChanged, this,
             &ConfigureAudio::UpdateAudioOutputDevices);
-    connect(ui->input_type_combo_box, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->input_type_combo_box, &QComboBox::currentIndexChanged, this,
             &ConfigureAudio::UpdateAudioInputDevices);
 }
 
@@ -224,7 +224,7 @@ void ConfigureAudio::SetupPerGameUI() {
     ui->input_device_combo_box->setVisible(false);
     ui->input_layout->setVisible(false);
 
-    connect(ui->volume_combo_box, qOverload<int>(&QComboBox::activated), this, [this](int index) {
+    connect(ui->volume_combo_box, &QComboBox::activated, this, [this](int index) {
         ui->volume_slider->setEnabled(index == 1);
         ConfigurationShared::SetHighlight(ui->volume_layout, index == 1);
     });

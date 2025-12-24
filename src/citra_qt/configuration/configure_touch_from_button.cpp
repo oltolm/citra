@@ -130,7 +130,7 @@ void ConfigureTouchFromButton::UpdateUiDisplay() {
 }
 
 void ConfigureTouchFromButton::ConnectEvents() {
-    connect(ui->mapping, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](int index) {
+    connect(ui->mapping, &QComboBox::currentIndexChanged, this, [this](int index) {
         SaveCurrentMapping();
         selected_index = index;
         UpdateUiDisplay();

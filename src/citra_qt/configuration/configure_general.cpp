@@ -198,13 +198,12 @@ void ConfigureGeneral::SetupPerGameUI() {
         return;
     }
 
-    connect(ui->emulation_speed_combo, qOverload<int>(&QComboBox::activated), this,
-            [this](int index) {
-                ui->frame_limit->setEnabled(index == 1);
-                ConfigurationShared::SetHighlight(ui->emulation_speed_layout, index == 1);
-            });
+    connect(ui->emulation_speed_combo, &QComboBox::activated, this, [this](int index) {
+        ui->frame_limit->setEnabled(index == 1);
+        ConfigurationShared::SetHighlight(ui->emulation_speed_layout, index == 1);
+    });
 
-    connect(ui->screenshot_combo, qOverload<int>(&QComboBox::activated), this, [this](int index) {
+    connect(ui->screenshot_combo, &QComboBox::activated, this, [this](int index) {
         ui->screenshot_dir_path->setEnabled(index == 1);
         ui->change_screenshot_dir->setEnabled(index == 1);
         ConfigurationShared::SetHighlight(ui->widget_screenshot, index == 1);

@@ -147,7 +147,7 @@ void ConfigureDebug::SetupPerGameUI() {
         return;
     }
 
-    connect(ui->clock_speed_combo, qOverload<int>(&QComboBox::activated), this, [this](int index) {
+    connect(ui->clock_speed_combo, &QComboBox::activated, this, [this](int index) {
         ui->slider_clock_speed->setEnabled(index == 1);
         ConfigurationShared::SetHighlight(ui->clock_speed_widget, index == 1);
     });

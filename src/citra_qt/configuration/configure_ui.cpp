@@ -38,7 +38,7 @@ void ConfigureUi::InitializeLanguageComboBox() {
     // Unlike other configuration changes, interface language changes need to be reflected on the
     // interface immediately. This is done by passing a signal to the main window, and then
     // retranslating when passing back.
-    connect(ui->language_combobox, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->language_combobox, &QComboBox::currentIndexChanged, this,
             &ConfigureUi::OnLanguageChanged);
 }
 

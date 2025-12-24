@@ -46,15 +46,15 @@ DumpingDialog::DumpingDialog(QWidget* parent, Core::System& system_)
 
     SetConfiguration();
 
-    connect(ui->formatComboBox, qOverload<int>(&QComboBox::currentIndexChanged), [this] {
+    connect(ui->formatComboBox, &QComboBox::currentIndexChanged, [this] {
         ui->pathLineEdit->setText(QString{});
         ui->formatOptionsLineEdit->clear();
         PopulateEncoders();
     });
 
-    connect(ui->videoEncoderComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
+    connect(ui->videoEncoderComboBox, &QComboBox::currentIndexChanged,
             [this] { ui->videoEncoderOptionsLineEdit->clear(); });
-    connect(ui->audioEncoderComboBox, qOverload<int>(&QComboBox::currentIndexChanged),
+    connect(ui->audioEncoderComboBox, &QComboBox::currentIndexChanged,
             [this] { ui->audioEncoderOptionsLineEdit->clear(); });
 }
 

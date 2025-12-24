@@ -201,9 +201,9 @@ void ConfigureMotionTouch::UpdateUiDisplay() {
 }
 
 void ConfigureMotionTouch::ConnectEvents() {
-    connect(ui->motion_provider, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->motion_provider, &QComboBox::currentIndexChanged, this,
             [this]([[maybe_unused]] int index) { UpdateUiDisplay(); });
-    connect(ui->touch_provider, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->touch_provider, &QComboBox::currentIndexChanged, this,
             [this]([[maybe_unused]] int index) { UpdateUiDisplay(); });
     connect(ui->motion_controller_button, &QPushButton::clicked, this, [this]() {
         if (QMessageBox::information(this, tr("Information"),

@@ -373,7 +373,7 @@ ConfigureInput::ConfigureInput(QWidget* parent)
     connect(ui->buttonDelete, &QPushButton::clicked, this, &ConfigureInput::DeleteProfile);
     connect(ui->buttonRename, &QPushButton::clicked, this, &ConfigureInput::RenameProfile);
 
-    connect(ui->profile, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](int i) {
+    connect(ui->profile, &QComboBox::currentIndexChanged, this, [this](int i) {
         ApplyConfiguration();
         Settings::SaveProfile(Settings::values.current_input_profile_index);
         Settings::LoadProfile(i);

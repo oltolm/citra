@@ -50,7 +50,7 @@ RecordDialog::RecordDialog(QWidget* parent, const IPCDebugger::RequestRecord& re
 
     UpdateCmdbufDisplay();
 
-    connect(ui->cmdbufSelection, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->cmdbufSelection, &QComboBox::currentIndexChanged, this,
             &RecordDialog::UpdateCmdbufDisplay);
     connect(ui->okButton, &QPushButton::clicked, this, &QDialog::close);
 }

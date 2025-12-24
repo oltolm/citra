@@ -83,7 +83,7 @@ void ConfigurationShared::SetColoredTristate(QCheckBox* checkbox, bool global, b
 
 void ConfigurationShared::SetColoredComboBox(QComboBox* combobox, QWidget* target, int global) {
     InsertGlobalItem(combobox, global);
-    QObject::connect(combobox, qOverload<int>(&QComboBox::activated), target,
+    QObject::connect(combobox, &QComboBox::activated, target,
                      [target](int index) { SetHighlight(target, index != 0); });
 }
 

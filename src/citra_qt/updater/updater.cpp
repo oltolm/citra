@@ -143,10 +143,10 @@ bool UpdaterPrivate::StartUpdateCheck() {
     main_process->setProgram(GetMaintenanceTool().absoluteFilePath());
     main_process->setArguments({QStringLiteral("--checkupdates")});
 
-    connect(main_process, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this,
-            &UpdaterPrivate::UpdaterReady, Qt::QueuedConnection);
-    connect(main_process, qOverload<QProcess::ProcessError>(&QProcess::errorOccurred), this,
-            &UpdaterPrivate::UpdaterError, Qt::QueuedConnection);
+    connect(main_process, &QProcess::finished, this, &UpdaterPrivate::UpdaterReady,
+            Qt::QueuedConnection);
+    connect(main_process, &QProcess::errorOccurred, this, &UpdaterPrivate::UpdaterError,
+            Qt::QueuedConnection);
 
     main_process->start(QIODevice::ReadOnly);
     running = true;

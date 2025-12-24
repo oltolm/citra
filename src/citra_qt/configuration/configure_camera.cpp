@@ -47,17 +47,16 @@ ConfigureCamera::~ConfigureCamera() {
 }
 
 void ConfigureCamera::ConnectEvents() {
-    connect(ui->image_source, qOverload<int>(&QComboBox::currentIndexChanged), this,
-            [this](int index) {
-                StopPreviewing();
-                UpdateImageSourceUI();
+    connect(ui->image_source, &QComboBox::currentIndexChanged, this, [this](int index) {
+        StopPreviewing();
+        UpdateImageSourceUI();
 #if defined(__APPLE__)
-                if (index == 2) {
-                    AppleAuthorization::CheckAuthorizationForCamera();
-                }
+        if (index == 2) {
+            AppleAuthorization::CheckAuthorizationForCamera();
+        }
 #endif
-            });
-    connect(ui->camera_selection, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
+    });
+    connect(ui->camera_selection, &QComboBox::currentIndexChanged, this, [this] {
         StopPreviewing();
         if (GetCameraSelection() != current_selected) {
             RecordConfig();
@@ -71,13 +70,13 @@ void ConfigureCamera::ConnectEvents() {
         UpdateCameraMode();
         SetConfiguration();
     });
-    connect(ui->camera_mode, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
+    connect(ui->camera_mode, &QComboBox::currentIndexChanged, this, [this] {
         StopPreviewing();
         ui->camera_position_label->setVisible(ui->camera_mode->currentIndex() == 1);
         ui->camera_position->setVisible(ui->camera_mode->currentIndex() == 1);
         current_selected = GetCameraSelection();
     });
-    connect(ui->camera_position, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] {
+    connect(ui->camera_position, &QComboBox::currentIndexChanged, this, [this] {
         StopPreviewing();
         if (GetCameraSelection() != current_selected) {
             RecordConfig();
@@ -94,10 +93,8 @@ void ConfigureCamera::ConnectEvents() {
         }
     });
     connect(ui->camera_file, &QLineEdit::textChanged, this, [this] { StopPreviewing(); });
-    connect(ui->system_camera, qOverload<int>(&QComboBox::currentIndexChanged), this,
-            [this] { StopPreviewing(); });
-    connect(ui->camera_flip, qOverload<int>(&QComboBox::currentIndexChanged), this,
-            [this] { StopPreviewing(); });
+    connect(ui->system_camera, &QComboBox::currentIndexChanged, this, [this] { StopPreviewing(); });
+    connect(ui->camera_flip, &QComboBox::currentIndexChanged, this, [this] { StopPreviewing(); });
 }
 
 void ConfigureCamera::UpdateCameraMode() {

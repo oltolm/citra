@@ -61,16 +61,14 @@ ConfigureGraphics::ConfigureGraphics(QString gl_renderer, std::span<const QStrin
     }
 #endif
 
-    connect(ui->graphics_api_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
-            [this](int index) {
-                const auto graphics_api =
-                    ConfigurationShared::GetComboboxSetting(index, &Settings::values.graphics_api);
-                const bool is_software = graphics_api == Settings::GraphicsAPI::Software;
+    connect(ui->graphics_api_combo, &QComboBox::currentIndexChanged, this, [this](int index) {
+        const auto graphics_api =
+            ConfigurationShared::GetComboboxSetting(index, &Settings::values.graphics_api);
+        const bool is_software = graphics_api == Settings::GraphicsAPI::Software;
 
-                ui->hw_renderer_group->setEnabled(!is_software);
-                ui->toggle_disk_shader_cache->setEnabled(!is_software &&
-                                                         ui->toggle_hw_shader->isChecked());
-            });
+        ui->hw_renderer_group->setEnabled(!is_software);
+        ui->toggle_disk_shader_cache->setEnabled(!is_software && ui->toggle_hw_shader->isChecked());
+    });
 
     connect(ui->toggle_hw_shader, &QCheckBox::toggled, this, [this] {
         const bool enabled = ui->toggle_hw_shader->isEnabled();
@@ -79,7 +77,7 @@ ConfigureGraphics::ConfigureGraphics(QString gl_renderer, std::span<const QStrin
         ui->toggle_disk_shader_cache->setEnabled(checked && enabled);
     });
 
-    connect(ui->graphics_api_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+    connect(ui->graphics_api_combo, &QComboBox::currentIndexChanged, this,
             &ConfigureGraphics::SetPhysicalDeviceComboVisibility);
 
     SetConfiguration();
