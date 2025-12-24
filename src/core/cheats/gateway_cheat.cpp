@@ -32,11 +32,9 @@ struct State {
 };
 
 template <typename T, typename ReadFunction, typename WriteFunction>
-static inline std::enable_if_t<std::is_integral_v<T>> WriteOp(const GatewayCheat::CheatLine& line,
-                                                              const State& state,
-                                                              ReadFunction read_func,
-                                                              WriteFunction write_func,
-                                                              Core::System& system) {
+    requires std::is_integral_v<T>
+static inline void WriteOp(const GatewayCheat::CheatLine& line, const State& state,
+                           ReadFunction read_func, WriteFunction write_func, Core::System& system) {
     u32 addr = line.address + state.offset;
     T val = read_func(addr);
     if (val != static_cast<T>(line.value)) {
@@ -46,9 +44,9 @@ static inline std::enable_if_t<std::is_integral_v<T>> WriteOp(const GatewayCheat
 }
 
 template <typename T, typename ReadFunction, typename CompareFunc>
-static inline std::enable_if_t<std::is_integral_v<T>> CompOp(const GatewayCheat::CheatLine& line,
-                                                             State& state, ReadFunction read_func,
-                                                             CompareFunc comp) {
+    requires std::is_integral_v<T>
+static inline void CompOp(const GatewayCheat::CheatLine& line, State& state, ReadFunction read_func,
+                          CompareFunc comp) {
     u32 addr = line.address + state.offset;
     T val = read_func(addr);
     if (!comp(val)) {
@@ -107,9 +105,10 @@ static inline void SetValueOp(const GatewayCheat::CheatLine& line, State& state)
 }
 
 template <typename T, typename ReadFunction, typename WriteFunction>
-static inline std::enable_if_t<std::is_integral_v<T>> IncrementiveWriteOp(
-    const GatewayCheat::CheatLine& line, State& state, ReadFunction read_func,
-    WriteFunction write_func, Core::System& system) {
+    requires std::is_integral_v<T>
+static inline void IncrementiveWriteOp(const GatewayCheat::CheatLine& line, State& state,
+                                       ReadFunction read_func, WriteFunction write_func,
+                                       Core::System& system) {
     u32 addr = line.value + state.offset;
     T val = read_func(addr);
     if (val != static_cast<T>(state.reg)) {
@@ -120,8 +119,9 @@ static inline std::enable_if_t<std::is_integral_v<T>> IncrementiveWriteOp(
 }
 
 template <typename T, typename ReadFunction>
-static inline std::enable_if_t<std::is_integral_v<T>> LoadOp(const GatewayCheat::CheatLine& line,
-                                                             State& state, ReadFunction read_func) {
+    requires std::is_integral_v<T>
+static inline void LoadOp(const GatewayCheat::CheatLine& line, State& state,
+                          ReadFunction read_func) {
 
     u32 addr = line.value + state.offset;
     state.reg = read_func(addr);
