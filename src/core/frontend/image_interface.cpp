@@ -2,6 +2,7 @@
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
+#include <cstring>
 #define DDSKTX_IMPLEMENT
 #include <dds-ktx.h>
 #include <lodepng.h>
