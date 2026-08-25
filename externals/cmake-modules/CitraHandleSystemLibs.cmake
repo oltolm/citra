@@ -4,7 +4,6 @@ option(USE_SYSTEM_LIBS "Use system libraries over bundled ones" OFF)
 CMAKE_DEPENDENT_OPTION(USE_SYSTEM_QT "Use the system Qt lib (instead of the bundled one)" OFF "ENABLE_QT;MSVC OR APPLE" ON)
 CMAKE_DEPENDENT_OPTION(USE_SYSTEM_MOLTENVK "Use the system MoltenVK lib (instead of the bundled one)" OFF "APPLE" OFF)
 option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
-option(USE_SYSTEM_BOOST "Use the system Boost libs (instead of the bundled ones)" OFF)
 option(USE_SYSTEM_OPENSSL "Use the system OpenSSL libs (instead of the bundled LibreSSL)" OFF)
 option(USE_SYSTEM_LIBUSB "Use the system libusb (instead of the bundled libusb)" OFF)
 option(USE_SYSTEM_CPP_JWT "Use the system cpp-jwt (instead of the bundled one)" OFF)
@@ -26,7 +25,6 @@ option(USE_SYSTEM_CATCH2 "Use the system Catch2 (instead of the bundled one)" OF
 
 # Qt and MoltenVK are handled separately
 CMAKE_DEPENDENT_OPTION(DISABLE_SYSTEM_SDL2 "Disable system SDL2" OFF "USE_SYSTEM_LIBS" OFF)
-CMAKE_DEPENDENT_OPTION(DISABLE_SYSTEM_BOOST "Disable system Boost" OFF "USE_SYSTEM_LIBS" OFF)
 CMAKE_DEPENDENT_OPTION(DISABLE_SYSTEM_OPENSSL "Disable system OpenSSL" OFF "USE_SYSTEM_LIBS" OFF)
 CMAKE_DEPENDENT_OPTION(DISABLE_SYSTEM_LIBUSB "Disable system LibUSB" OFF "USE_SYSTEM_LIBS" OFF)
 CMAKE_DEPENDENT_OPTION(DISABLE_SYSTEM_CPP_JWT "Disable system cpp-jwt" OFF "USE_SYSTEM_LIBS" OFF)
@@ -51,7 +49,6 @@ CMAKE_DEPENDENT_OPTION(DISABLE_SYSTEM_CATCH2 "Disable system Catch2" OFF "USE_SY
 
 set(LIB_VAR_LIST
     SDL2
-    BOOST
     OPENSSL
     LIBUSB
     CPP_JWT

@@ -359,20 +359,10 @@ add_compile_definitions(BOOST_ERROR_CODE_HEADER_ONLY
     BOOST_DATE_TIME_NO_LIB
     BOOST_REGEX_NO_LIB
 )
-if (USE_SYSTEM_BOOST)
-    find_package(Boost 1.70.0 COMPONENTS container locale serialization iostreams REQUIRED)
-endif()
+find_package(Boost 1.70.0 COMPONENTS container locale serialization iostreams REQUIRED)
 
 enable_testing()
 add_subdirectory(externals)
-
-# Boost (bundled)
-if (NOT USE_SYSTEM_BOOST)
-    add_compile_definitions( BOOST_ALL_NO_LIB )
-    add_library(Boost::boost ALIAS boost)
-    add_library(Boost::serialization ALIAS boost_serialization)
-    add_library(Boost::iostreams ALIAS boost_iostreams)
-endif()
 
 # SDL2
 if (ENABLE_SDL2 AND USE_SYSTEM_SDL2)
