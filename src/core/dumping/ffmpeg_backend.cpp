@@ -141,6 +141,35 @@ static AVPixelFormat GetPixelFormat(AVCodecContext* avctx, const AVPixelFormat* 
     return AV_PIX_FMT_NONE;
 }
 
+static const AVPixelFormat* GetSupportedPixelFormats(const AVCodecContext* context,
+                                                     const AVCodec* codec) {
+    const void* formats = nullptr;
+    if (FFmpeg::avcodec_get_supported_config(context, codec, AV_CODEC_CONFIG_PIX_FORMAT, 0,
+                                             &formats, nullptr) < 0) {
+        return nullptr;
+    }
+    return static_cast<const AVPixelFormat*>(formats);
+}
+
+static const AVSampleFormat* GetSupportedSampleFormats(const AVCodecContext* context,
+                                                       const AVCodec* codec) {
+    const void* formats = nullptr;
+    if (FFmpeg::avcodec_get_supported_config(context, codec, AV_CODEC_CONFIG_SAMPLE_FORMAT, 0,
+                                             &formats, nullptr) < 0) {
+        return nullptr;
+    }
+    return static_cast<const AVSampleFormat*>(formats);
+}
+
+static const int* GetSupportedSampleRates(const AVCodecContext* context, const AVCodec* codec) {
+    const void* rates = nullptr;
+    if (FFmpeg::avcodec_get_supported_config(context, codec, AV_CODEC_CONFIG_SAMPLE_RATE, 0,
+                                             &rates, nullptr) < 0) {
+        return nullptr;
+    }
+    return static_cast<const int*>(rates);
+}
+
 bool FFmpegVideoStream::Init(FFmpegMuxer& muxer, const Layout::FramebufferLayout& layout_) {
     InitializeFFmpegLibraries();
 
@@ -173,10 +202,12 @@ bool FFmpegVideoStream::Init(FFmpegMuxer& muxer, const Layout::FramebufferLayout
     // Get pixel format for codec
     auto options = ToAVDictionary(Settings::values.video_encoder_options);
     auto pixel_format_opt = FFmpeg::av_dict_get(options, "pixel_format", nullptr, 0);
+    const AVPixelFormat* supported_pixel_formats =
+        GetSupportedPixelFormats(codec_context.get(), codec);
     if (pixel_format_opt) {
         sw_pixel_format = FFmpeg::av_get_pix_fmt(pixel_format_opt->value);
-    } else if (codec->pix_fmts) {
-        sw_pixel_format = GetPixelFormat(codec_context.get(), codec->pix_fmts);
+    } else if (supported_pixel_formats) {
+        sw_pixel_format = GetPixelFormat(codec_context.get(), supported_pixel_formats);
     } else {
         sw_pixel_format = AV_PIX_FMT_YUV420P;
     }
@@ -285,11 +316,14 @@ void FFmpegVideoStream::ProcessFrame(VideoFrame& frame) {
 }
 
 bool FFmpegVideoStream::InitHWContext(const AVCodec* codec) {
-    for (std::size_t i = 0; codec->pix_fmts[i] != AV_PIX_FMT_NONE; ++i) {
+    const AVPixelFormat* supported_pixel_formats =
+        GetSupportedPixelFormats(codec_context.get(), codec);
+    for (std::size_t i = 0;
+         supported_pixel_formats && supported_pixel_formats[i] != AV_PIX_FMT_NONE; ++i) {
         const AVCodecHWConfig* config;
         for (int j = 0;; ++j) {
             config = FFmpeg::avcodec_get_hw_config(codec, j);
-            if (!config || config->pix_fmt == codec->pix_fmts[i]) {
+            if (!config || config->pix_fmt == supported_pixel_formats[i]) {
                 break;
             }
         }
@@ -303,7 +337,7 @@ bool FFmpegVideoStream::InitHWContext(const AVCodec* codec) {
             continue;
         }
 
-        codec_context->pix_fmt = codec->pix_fmts[i];
+        codec_context->pix_fmt = supported_pixel_formats[i];
 
         // Create HW device context
         AVBufferRef* hw_device_context;
@@ -351,7 +385,7 @@ bool FFmpegVideoStream::InitHWContext(const AVCodec* codec) {
 
         AVHWFramesContext* hw_frames_context =
             reinterpret_cast<AVHWFramesContext*>(hw_frames_context_ref->data);
-        hw_frames_context->format = codec->pix_fmts[i];
+        hw_frames_context->format = supported_pixel_formats[i];
         hw_frames_context->sw_format = sw_pixel_format;
         hw_frames_context->width = codec_context->width;
         hw_frames_context->height = codec_context->height;
@@ -399,13 +433,8 @@ bool FFmpegVideoStream::InitFilters() {
         return false;
     }
 
-    // Point av_opt_set_int_list to correct functions.
-#define av_int_list_length_for_size FFmpeg::av_int_list_length_for_size
-#define av_opt_set_bin FFmpeg::av_opt_set_bin
-
-    const AVPixelFormat pix_fmts[] = {sw_pixel_format, AV_PIX_FMT_NONE};
-    if (av_opt_set_int_list(sink_context, "pix_fmts", pix_fmts, AV_PIX_FMT_NONE,
-                            AV_OPT_SEARCH_CHILDREN) < 0) {
+    if (FFmpeg::av_opt_set_array(sink_context, "pixel_formats", AV_OPT_SEARCH_CHILDREN, 0, 1,
+                                 AV_OPT_TYPE_PIXEL_FMT, &sw_pixel_format) < 0) {
         LOG_ERROR(Render, "Could not set output pixel format");
         return false;
     }
@@ -468,16 +497,19 @@ bool FFmpegAudioStream::Init(FFmpegMuxer& muxer) {
     // Configure audio codec context
     codec_context->codec_type = AVMEDIA_TYPE_AUDIO;
     codec_context->bit_rate = Settings::values.audio_bitrate;
-    if (codec->sample_fmts) {
-        codec_context->sample_fmt = codec->sample_fmts[0];
+    const AVSampleFormat* supported_sample_formats =
+        GetSupportedSampleFormats(codec_context.get(), codec);
+    if (supported_sample_formats) {
+        codec_context->sample_fmt = supported_sample_formats[0];
     } else {
         codec_context->sample_fmt = AV_SAMPLE_FMT_S16P;
     }
 
-    if (codec->supported_samplerates) {
-        codec_context->sample_rate = codec->supported_samplerates[0];
+    const int* supported_sample_rates = GetSupportedSampleRates(codec_context.get(), codec);
+    if (supported_sample_rates) {
+        codec_context->sample_rate = supported_sample_rates[0];
         // Prefer native sample rate if supported
-        const int* ptr = codec->supported_samplerates;
+        const int* ptr = supported_sample_rates;
         while ((*ptr)) {
             if ((*ptr) == AudioCore::native_sample_rate) {
                 codec_context->sample_rate = AudioCore::native_sample_rate;
@@ -956,8 +988,8 @@ std::string FormatDefaultValue(const AVOption* option,
     case AV_OPT_TYPE_VIDEO_RATE: {
         return ToStdString(option->default_val.str);
     }
-    case AV_OPT_TYPE_CHANNEL_LAYOUT: {
-        return fmt::format("{:#x}", option->default_val.i64);
+    case AV_OPT_TYPE_CHLAYOUT: {
+        return ToStdString(option->default_val.str);
     }
     default:
         return "";
