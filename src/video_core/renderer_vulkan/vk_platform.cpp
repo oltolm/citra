@@ -375,7 +375,8 @@ vk::UniqueDebugUtilsMessengerEXT CreateDebugMessenger(vk::Instance instance) {
                        vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
                        vk::DebugUtilsMessageTypeFlagBitsEXT::eDeviceAddressBinding |
                        vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance,
-        .pfnUserCallback = DebugUtilsCallback,
+        .pfnUserCallback = reinterpret_cast<
+            decltype(vk::DebugUtilsMessengerCreateInfoEXT::pfnUserCallback)>(DebugUtilsCallback),
     };
     return instance.createDebugUtilsMessengerEXTUnique(msg_ci);
 }
@@ -386,7 +387,8 @@ vk::UniqueDebugReportCallbackEXT CreateDebugReportCallback(vk::Instance instance
                  vk::DebugReportFlagBitsEXT::eError |
                  vk::DebugReportFlagBitsEXT::ePerformanceWarning |
                  vk::DebugReportFlagBitsEXT::eWarning,
-        .pfnCallback = DebugReportCallback,
+        .pfnCallback = reinterpret_cast<
+            decltype(vk::DebugReportCallbackCreateInfoEXT::pfnCallback)>(DebugReportCallback),
     };
     return instance.createDebugReportCallbackEXTUnique(callback_ci);
 }

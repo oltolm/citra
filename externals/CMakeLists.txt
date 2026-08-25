@@ -350,14 +350,10 @@ if (ENABLE_VULKAN)
 
     # vulkan-headers
     add_library(vulkan-headers INTERFACE)
-    if(USE_SYSTEM_VULKAN_HEADERS)
-        find_package(Vulkan REQUIRED)
-        if(TARGET Vulkan::Headers)
-            message(STATUS "Found Vulkan headers")
-            target_link_libraries(vulkan-headers INTERFACE Vulkan::Headers)
-        endif()
-    else()
-        target_include_directories(vulkan-headers SYSTEM INTERFACE ./vulkan-headers/include)
+    find_package(Vulkan REQUIRED)
+    if(TARGET Vulkan::Headers)
+        message(STATUS "Found Vulkan headers")
+        target_link_libraries(vulkan-headers INTERFACE Vulkan::Headers)
     endif()
 
     # adrenotools

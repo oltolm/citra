@@ -58,9 +58,6 @@
 [submodule "vma"]
     path = externals/vma
     url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-[submodule "vulkan-headers"]
-    path = externals/vulkan-headers
-    url = https://github.com/KhronosGroup/Vulkan-Headers
 [submodule "sirit"]
     path = externals/sirit
     url = https://github.com/yuzu-emu/sirit
