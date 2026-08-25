@@ -54,7 +54,6 @@ endif()
 
 option(ENABLE_SDL2 "Enable using SDL2" ON)
 cmake_dependent_option(ENABLE_SDL2_FRONTEND "Enable the SDL2 frontend" ON "ENABLE_SDL2;NOT ANDROID AND NOT IOS" OFF)
-option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
 
 # Set bundled qt as dependent options.
 option(ENABLE_QT "Enable the Qt frontend" ON)
@@ -365,7 +364,7 @@ enable_testing()
 add_subdirectory(externals)
 
 # SDL2
-if (ENABLE_SDL2 AND USE_SYSTEM_SDL2)
+if (ENABLE_SDL2)
     find_package(SDL2 REQUIRED)
     add_library(SDL2 INTERFACE)
     target_link_libraries(SDL2 INTERFACE "${SDL2_LIBRARY}")
