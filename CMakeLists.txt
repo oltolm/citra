@@ -359,7 +359,7 @@ add_compile_definitions(BOOST_ERROR_CODE_HEADER_ONLY
     BOOST_DATE_TIME_NO_LIB
     BOOST_REGEX_NO_LIB
 )
-find_package(Boost 1.70.0 COMPONENTS container locale serialization iostreams REQUIRED)
+find_package(Boost 1.70.0 CONFIG COMPONENTS container locale serialization iostreams REQUIRED)
 
 enable_testing()
 add_subdirectory(externals)
