@@ -49,9 +49,6 @@
 [submodule "dds-ktx"]
     path = externals/dds-ktx
     url = https://github.com/septag/dds-ktx
-[submodule "vma"]
-    path = externals/vma
-    url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 [submodule "sirit"]
     path = externals/sirit
     url = https://github.com/yuzu-emu/sirit

@@ -309,17 +309,9 @@ if (ENABLE_VULKAN)
     add_subdirectory(sirit EXCLUDE_FROM_ALL)
 
     # VMA
-    if(USE_SYSTEM_VMA)
-        add_library(vma INTERFACE)
-        find_package(VulkanMemoryAllocator REQUIRED)
-        if(TARGET GPUOpen::VulkanMemoryAllocator)
-            message(STATUS "Found VulkanMemoryAllocator")
-            target_link_libraries(vma INTERFACE GPUOpen::VulkanMemoryAllocator)
-        endif()
-    else()
-        add_library(vma INTERFACE)
-        target_include_directories(vma SYSTEM INTERFACE ./vma/include)
-    endif()
+    find_path(VMA_INCLUDE_DIR vk_mem_alloc.h PATH_SUFFIXES vma REQUIRED)
+    add_library(vma INTERFACE)
+    target_include_directories(vma SYSTEM INTERFACE "${VMA_INCLUDE_DIR}")
 
     # vulkan-headers
     add_library(vulkan-headers INTERFACE)
