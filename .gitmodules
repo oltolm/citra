@@ -4,9 +4,6 @@
 [submodule "soundtouch"]
     path = externals/soundtouch
     url = https://codeberg.org/soundtouch/soundtouch.git
-[submodule "catch2"]
-    path = externals/catch2
-    url = https://github.com/catchorg/Catch2
 [submodule "dynarmic"]
     path = externals/dynarmic
     url = https://github.com/merryhime/dynarmic.git
