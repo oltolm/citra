@@ -216,7 +216,7 @@ set(OPENSSL_LIBRARIES OpenSSL::SSL OpenSSL::Crypto)
 # httplib
 add_library(httplib INTERFACE)
 if(USE_SYSTEM_CPP_HTTPLIB)
-    find_package(CppHttp 0.14.1)
+    find_package(CppHttp 0.60.1)
     # Detect if system cpphttplib is a shared library
     # this breaks building as Citra relies on functions that are moved
     # into the shared object.
@@ -235,7 +235,10 @@ if(USE_SYSTEM_CPP_HTTPLIB)
 else()
     target_include_directories(httplib SYSTEM INTERFACE ./httplib)
 endif()
-target_compile_options(httplib INTERFACE -DCPPHTTPLIB_OPENSSL_SUPPORT)
+target_compile_definitions(httplib INTERFACE
+    CPPHTTPLIB_OPENSSL_SUPPORT
+    CPPHTTPLIB_PAYLOAD_MAX_LENGTH=0
+)
 target_link_libraries(httplib INTERFACE ${OPENSSL_LIBRARIES})
 
 if (UNIX AND NOT APPLE)

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "common/vector_math.h"
 #include "video_core/rasterizer_interface.h"
 #include "video_core/shader/generator/pica_fs_config.h"

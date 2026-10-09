@@ -9,6 +9,8 @@
 #include <cryptopp/aes.h>
 #include <cryptopp/modes.h>
 #include <fmt/format.h>
+#include <httplib.h>
+#include <openssl/pem.h>
 #include "common/archives.h"
 #include "common/assert.h"
 #include "common/scope_exit.h"
@@ -159,7 +161,7 @@ static std::size_t WriteHeaders(httplib::Stream& stream,
                                 std::span<const Context::RequestHeader> headers) {
     std::size_t write_len = 0;
     for (const auto& header : headers) {
-        auto len = stream.write_format("%s: %s\r\n", header.name.c_str(), header.value.c_str());
+        auto len = stream.write(fmt::format("{}: {}\r\n", header.name.c_str(), header.value.c_str()));
         if (len < 0) {
             return len;
         }
@@ -182,7 +184,7 @@ static void SerializeChunkedAsciiPostData(httplib::DataSink& sink, const Context
         }
 
         query =
-            fmt::format("{}={}", it->first, httplib::detail::encode_query_param(it->second.value));
+            fmt::format("{}={}", it->first, httplib::encode_uri_component(it->second.value));
         boost::replace_all(query, "*", "%2A");
         sink.os << query;
     }
@@ -254,17 +256,23 @@ std::size_t Context::HandleHeaderWrite(std::vector<Context::RequestHeader>& pend
 };
 
 void Context::ParseAsciiPostData() {
-    httplib::Params ascii_form;
-    for (auto param : post_data) {
-        ascii_form.emplace(param.first, param.second.value);
+    post_data_raw.clear();
+
+    for (auto it = post_data.begin(); it != post_data.end(); ++it) {
+        if (it != post_data.begin()) {
+            post_data_raw += '&';
+        }
+
+        post_data_raw += it->first;
+        post_data_raw += '=';
+        post_data_raw += httplib::encode_uri_component(it->second.value);
     }
 
-    post_data_raw = httplib::detail::params_to_query_str(ascii_form);
     boost::replace_all(post_data_raw, "*", "%2A");
 }
 
 std::string Context::ParseMultipartFormData() {
-    httplib::MultipartFormDataItems multipart_form;
+    httplib::UploadFormDataItems multipart_form;
     for (auto param : post_data) {
         multipart_form.push_back(param.second.ToMultipartForm());
     }
@@ -294,7 +302,7 @@ void Context::MakeRequest() {
     request.method = request_method_strings.at(method);
     request.path = url_info.path;
 
-    request.progress = [this](u64 current, u64 total) -> bool {
+    request.download_progress = [this](u64 current, u64 total) -> bool {
         // TODO(B3N30): Is there a state that shows response header are available
         current_download_size_bytes = current;
         total_download_size_bytes = total;
@@ -306,7 +314,7 @@ void Context::MakeRequest() {
     }
 
     httplib::Params ascii_form;
-    httplib::MultipartFormDataItems multipart_form;
+    httplib::UploadFormDataItems multipart_form;
     if ((method == RequestMethod::Post || method == RequestMethod::Put) && !chunked_request) {
         switch (post_data_encoding) {
         case PostDataEncoding::AsciiForm:
@@ -422,8 +430,29 @@ void Context::MakeRequestSSL(httplib::Request& request, const URLInfo& url_info,
     if (cert_data && key_data) {
         cert = d2i_X509(nullptr, &cert_data, cert_size);
         key = d2i_PrivateKey(EVP_PKEY_RSA, nullptr, &key_data, key_size);
-        client = std::make_unique<httplib::SSLClient>(url_info.host, url_info.port, cert, key);
-    } else {
+
+        BIO* cert_bio = cert ? BIO_new(BIO_s_mem()) : nullptr;
+        BIO* key_bio = key ? BIO_new(BIO_s_mem()) : nullptr;
+        SCOPE_EXIT({
+            BIO_free(cert_bio);
+            BIO_free(key_bio);
+        });
+
+        if (cert_bio && key_bio && PEM_write_bio_X509(cert_bio, cert) == 1 &&
+            PEM_write_bio_PrivateKey(key_bio, key, nullptr, nullptr, 0, nullptr, nullptr) == 1) {
+            char* cert_pem_data = nullptr;
+            char* key_pem_data = nullptr;
+            const auto cert_pem_size = BIO_get_mem_data(cert_bio, &cert_pem_data);
+            const auto key_pem_size = BIO_get_mem_data(key_bio, &key_pem_data);
+            const std::string cert_pem(cert_pem_data, cert_pem_size);
+            const std::string key_pem(key_pem_data, key_pem_size);
+            const httplib::SSLClient::PemMemory pem{
+                cert_pem.c_str(), cert_pem.size(), key_pem.c_str(), key_pem.size(), nullptr};
+            client = std::make_unique<httplib::SSLClient>(url_info.host, url_info.port, pem);
+        }
+    }
+
+    if (!client) {
         client = std::make_unique<httplib::SSLClient>(url_info.host, url_info.port);
     }
 

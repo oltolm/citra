@@ -221,8 +221,8 @@ public:
         std::string value;
         bool is_binary = false;
 
-        httplib::MultipartFormData ToMultipartForm() const {
-            httplib::MultipartFormData form;
+        httplib::UploadFormData ToMultipartForm() const {
+            httplib::UploadFormData form;
             form.name = name;
             form.content = value;
             if (is_binary) {

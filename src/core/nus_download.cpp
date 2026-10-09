@@ -38,7 +38,7 @@ std::optional<std::vector<u8>> Download(const std::string& path) {
                   response.status);
         return {};
     }
-    if (!response.headers.contains("content-type")) {
+    if (response.headers.find("content-type") == response.headers.end()) {
         LOG_ERROR(WebService, "GET to {}{} returned no content", HOST, path);
         return {};
     }
